@@ -3,30 +3,22 @@ import java.security.SecureRandom;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 public class MAC {
     public static String macString(String input) throws Exception{
-        //Creating KeyGenerator object
-        KeyGenerator keyGen = KeyGenerator.getInstance("DES");
-
-        //Creating a SecureRandom object
-        SecureRandom secRandom = new SecureRandom();
-
-        //Initializing the KeyGenerator
-        keyGen.init(secRandom);
-
-        //Generation a key
-        Key key = keyGen.generateKey();
+        //Hardcoded key so the macs won't be different with the same message
+        String key = "S3cr3tK3y1234567";
+        SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(), "HmacSHA256");
 
         //Creating a MAC object
         Mac mac = Mac.getInstance("HmacSHA256");
 
         //Initializing the Mac object
-        mac.init(key);
+        mac.init(keySpec);
 
         //Computing the Mac
-        String msg = input;
-        byte[] bytes = msg.getBytes();      
+        byte[] bytes = input.getBytes();      
         byte[] macResult = mac.doFinal(bytes);
 
         StringBuilder hexString = new StringBuilder();
