@@ -7,9 +7,9 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class MAC {
     public static String macString(String input) throws Exception{
-        //Hardcoded key so the macs won't be different with the same message
+        //Hardcoded key
         String key = "S3cr3tK3y1234567";
-        SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(), "HmacSHA256");
+        SecretKeySpec keySpec = new SecretKeySpec(key.getBytes("UTF-8"), "HmacSHA256");
 
         //Creating a MAC object
         Mac mac = Mac.getInstance("HmacSHA256");
@@ -18,7 +18,7 @@ public class MAC {
         mac.init(keySpec);
 
         //Computing the Mac
-        byte[] bytes = input.getBytes();      
+        byte[] bytes = input.getBytes("UTF-8");      
         byte[] macResult = mac.doFinal(bytes);
 
         StringBuilder hexString = new StringBuilder();
