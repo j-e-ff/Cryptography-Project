@@ -1,15 +1,15 @@
 import javax.crypto.Cipher;
-import java.util.Scanner;
 import java.io.IOException;
 import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Base64;
-import javax.crypto.Cipher;
+import java.util.Scanner;
 import java.security.*;
 import java.security.spec.*;
 
- 
 public class RSA {
-    public static void generateRSAKeyPair() throws Exception{
+   public static void generateRSAKeyPair() throws Exception{
         // ask user for file name
         Scanner scan = new Scanner(System.in);
         System.out.print("Enter File Name for Key Pair: ");
@@ -38,38 +38,27 @@ public class RSA {
         }
     }
 
-    // Method for loading the public key from a file
-    public static PublicKey loadPublicKey(String fileName) throws Exception{
-        String key = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(fileName)));
-        byte[] keyBytes = Base64.getDecoder().decode(key);
-
+    public static PublicKey loadPublicKey(String fileName) throws Exception {
+        byte[] keyBytes = Base64.getDecoder().decode(Files.readString(Paths.get(fileName)).trim());
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
-        return keyFactory.generatePublic(keySpec);
+        return keyFactory.generatePublic(new X509EncodedKeySpec(keyBytes));
     }
 
-    // Method for loading the private key from a file
     public static PrivateKey loadPrivateKey(String fileName) throws Exception {
-        String key = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(fileName)));
-        byte[] keyBytes = Base64.getDecoder().decode(key);
-
+        byte[] keyBytes = Base64.getDecoder().decode(Files.readString(Paths.get(fileName)).trim());
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
-        return keyFactory.generatePrivate(keySpec);
+        return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(keyBytes));
     }
 
-    // Encryption method
-    public static byte[] encrypt(String message, PublicKey publicKey) throws Exception{
+    public static byte[] encrypt(String message, PublicKey publicKey) throws Exception {
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
         return cipher.doFinal(message.getBytes());
     }
 
-    // Decryption method
-    public static String decrypt(byte[] cipherText, PrivateKey privateKey) throws Exception{
+    public static String decrypt(byte[] cipherText, PrivateKey privateKey) throws Exception {
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
-        byte[] decrypted = cipher.doFinal(cipherText);
-        return new String(decrypted);
+        return new String(cipher.doFinal(cipherText));
     }
 }
